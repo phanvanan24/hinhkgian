@@ -1,7 +1,7 @@
 import "dotenv/config";
 import { GeometryData, DistanceResult } from "../../client/src/lib/stores/useGeometry";
 
-const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY;
+const OPENROUTER_API_KEY = "sk-or-v14b19aef4d32102238aecf622cf3f89349efd157d689390b98362db6dd73944b5";
 const OPENROUTER_URL = "https://openrouter.ai/api/v1/chat/completions";
 
 export type DistanceMode = 'line-line' | 'plane-plane' | 'line-plane';
