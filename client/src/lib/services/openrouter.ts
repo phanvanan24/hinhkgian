@@ -1,6 +1,6 @@
 import { GeometryData, DistanceResult, DistanceMode } from "../stores/useGeometry";
 
-const OPENROUTER_API_KEY = import.meta.env.VITE_OPENROUTER_API_KEY;
+const OPENROUTER_API_KEY = "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";
 const OPENROUTER_URL = "https://openrouter.ai/api/v1/chat/completions";
 
 export async function generateGeometry(description: string): Promise<GeometryData> {
