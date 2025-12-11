@@ -230,39 +230,25 @@ export default function GeometryControls() {
   const generateGeometry = useMutation({
     mutationFn: async (description: string) => {
       console.log(`[Lần thử ${retryCount + 1}/${maxRetries}] Gửi yêu cầu tạo hình:`, description);
-      
+
       try {
-        const url = API_BASE ? `${API_BASE}/api/generate-geometry` : "/api/generate-geometry";
-        const response = await fetch(url, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ description }),
-        });
-        
-        console.log("Response status:", response.status);
-        
-        if (!response.ok) {
-          const errorText = await response.text();
-          console.error("API error:", errorText);
-          
-          // Parse error to check if it's a JSON error
-          const isJsonError = errorText.includes("JSON") || errorText.includes("Expected property");
-          const isRateLimit = response.status === 429 || errorText.includes("rate");
-          
-          throw new Error(JSON.stringify({
-            status: response.status,
-            message: errorText,
-            isJsonError,
-            isRateLimit
-          }));
-        }
-        
-        const data = await response.json();
+        const { generateGeometry: generateGeometryAPI } = await import("../lib/services/openrouter");
+        const data = await generateGeometryAPI(description);
         console.log("✓ Dữ liệu nhận được thành công:", data);
         return data;
       } catch (error: any) {
         console.error("Lỗi khi tạo hình:", error);
-        throw error;
+
+        const errorMsg = error?.message || "";
+        const isJsonError = errorMsg.includes("JSON") || errorMsg.includes("Expected property") || errorMsg.includes("Invalid AI response");
+        const isRateLimit = errorMsg.includes("429") || errorMsg.includes("rate");
+
+        throw new Error(JSON.stringify({
+          status: isRateLimit ? 429 : 500,
+          message: errorMsg,
+          isJsonError,
+          isRateLimit
+        }));
       }
     },
     onMutate: () => {
@@ -579,4 +565,3 @@ export default function GeometryControls() {
     </div>
   );
 }
-  const API_BASE = import.meta.env.VITE_API_BASE || "";
